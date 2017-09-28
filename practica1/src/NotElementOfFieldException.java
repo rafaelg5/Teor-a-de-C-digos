@@ -1,7 +1,7 @@
 /**
  * Clase para excepciones de elementos inválidos de un campo.
  */
-public class NotElementOfFieldException  extends Exception {
+public class NotElementOfFieldException extends Exception{
 
     /**
      * Constructor vacío.
@@ -12,7 +12,7 @@ public class NotElementOfFieldException  extends Exception {
 
     /**
      * Constructor que recibe un mensaje para el usuario.
-     * @param mensaje un mensaje que verá el usuario cuando ocurra la excepción.
+     * @param msg un mensaje que verá el usuario cuando ocurra la excepción.
      */
     public NotElementOfFieldException(String msg) {
         super(msg);

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="practica1" default="practica1.jar" basedir="." >
+
+  <property name="build.dir" value="build" />
+  <property name="src.dir"   value="src" />
+  <property name="doc.dir"   value="doc" />
+
+  <target name="practica1.jar" depends="compile.practica1">
+    <jar jarfile="practica1.jar">
+      <zipfileset dir="${build.dir}" prefix="" />
+      <manifest>
+        <attribute name="Main-Class" value="Main"/>
+      </manifest>
+    </jar>
+  </target>
+
+  <target name="compile.practica1">
+    <mkdir dir="${build.dir}"/>
+    <javac srcdir="${src.dir}"
+           destdir="${build.dir}"
+           debug="true"
+           debuglevel="lines,vars,source"
+           includeantruntime="false"
+           deprecation="true"
+           nowarn="off">
+      <compilerarg value="-Xlint:unchecked"/>
+    </javac>
+  </target>
+
+  <target name="doc" depends="practica1.jar">
+    <mkdir dir="${doc.dir}"/>
+    <javadoc defaultexcludes="yes"
+             destdir="${doc.dir}"
+             charset="UTF-8"
+             author="false"
+             version="false"
+             use="true"
+             windowtitle="Campos Finitos">
+      <fileset dir="${src.dir}"/>
+      <doctitle><![CDATA[<h1>Campos Finitos</h1>]]></doctitle>
+      <link href="http://docs.oracle.com/javase/8/docs/api/" />
+    </javadoc>
+  </target>
+
+  <target name="clean">
+    <delete file="practica1.jar"/>
+    <delete dir="${build.dir}"/>
+    <delete dir="${doc.dir}"/>
+    <delete file="build.xml~"/>
+  </target>
+
+</project>

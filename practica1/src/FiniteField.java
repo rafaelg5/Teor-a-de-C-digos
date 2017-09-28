@@ -1,12 +1,14 @@
 import java.util.*;
+import java.io.Serializable;
 
-public class FiniteField{
+public class FiniteField implements Serializable{
     
     private int q;
     private int p;
     private int n;
     private Polynomial[] elements;
     private Polynomial primitivePolynomial;
+    private static final long serialVersionUID = 1L;
 
     /**
      * Constructor para un campo finito. Tal que el número de elementos
@@ -15,25 +17,47 @@ public class FiniteField{
      * con coeficientes en Zp.
      * @param p un número primo
      * @param coeffs los coeficientes de un polinomio
+     * @throws Exception si el polinomio es constante o si no es irreducible
      */
     public FiniteField(int p, int[] coeffs) throws Exception{
 
-	if(coeffs.length == 1)
+	Polynomial polynomial = new Polynomial(coeffs);
+	n = polynomial.getDegree();
+	
+	if(n == 0)
 	    throw new PolynomialDegreeException("Polinomio inválido");
 	
-	Polynomial polynomial = new Polynomial(coeffs);
-	
-	n = polynomial.getDegree();
 	q = (int)Math.pow(p, n);
 	this.p = p;	
 	elements = new Polynomial[q];
 	elements = setElements();
+
+	/* si el polinomio es de grado 1, no tiene polinomio generador o
+	 * primitivo
+	 */
 	if(coeffs.length > 2)
 	    findPrimitivePolynomial();
 
+	// Si no es irreducible el polinomio, lanzar excepción
 	if(!isIrreducible(polynomial)){
 	    throw new Exception("El polinomio no es irreducible");
 	}
+    }
+
+    /**
+     * Obtiene el grado del polinomio irreducible
+     * @return el grado del polinomio
+     */
+    public int getN(){
+	return this.n;
+    }
+
+    /**
+     * Obtiene el p del campo Z_p
+     * @return el orden del campo Z_p
+     */
+    public int getP(){
+	return this.p;
     }
 
     /**
@@ -252,6 +276,7 @@ public class FiniteField{
      * @param e2 la posición de un elemento del campo
      * @return la suma de dos elementos del campo, la cual es un elemento 
      * del campo
+     * @throws NotElementOfFieldException si el elemento no está en el campo
      */
     public Polynomial sum(int e1, int e2)
 	throws NotElementOfFieldException{
@@ -278,6 +303,7 @@ public class FiniteField{
      * @param e2 la posición de un elemento del campo
      * @return la resta de dos elementos del campo, la cual es un elemento 
      * del campo
+     * @throws NotElementOfFieldException si el elemento no está en el campo
      */
     public Polynomial difference(int e1, int e2)
 	throws NotElementOfFieldException{
@@ -303,6 +329,7 @@ public class FiniteField{
      * @param e2 la posición de un elemento del campo
      * @return el producto de dos elementos del campo, el cual es un elemento
      * del campo
+     * @throws NotElementOfFieldException si el elemento no está en el campo
      */
     public Polynomial multiply(int e1, int e2)
 	throws NotElementOfFieldException{
@@ -331,6 +358,7 @@ public class FiniteField{
      * p(x) + (-p(x)) = 0
      * @param e la posición de un elemento del campo
      * @return el inverso aditivo
+     * @throws NotElementOfFieldException si el elemento no está en el campo
      */
     public Polynomial additiveInverse(int e)
 	throws NotElementOfFieldException{
@@ -351,6 +379,7 @@ public class FiniteField{
      * p(x) * p(x)^-1 = 1
      * @param e la posición de un elemento del campo
      * @return el inverso multiplicativo
+     * @throws NotElementOfFieldException si el elemento no está en el campo
      */
     public Polynomial multiplicativeInverse(int e)
 	throws NotElementOfFieldException{

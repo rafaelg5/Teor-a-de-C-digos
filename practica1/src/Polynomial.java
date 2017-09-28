@@ -1,9 +1,11 @@
 import java.util.Arrays;
+import java.io.Serializable;
 
-public class Polynomial{
+public class Polynomial implements Serializable{
     
     private int degree;
     private int[] coeff;
+    private static final long serialVersionUID = 2L;
 
     /**
      * Construye un polinomio
@@ -80,6 +82,11 @@ public class Polynomial{
 	return coeff[xi];
     }
 
+    /**
+     * Cambia un coeficiente del polinomio
+     * @param coeff el nuevo coeficientes del polinomio
+     * @param xi la posición del coeficiente ai (coeff) de xi
+     */ 
     public void setCoefficient(int coeff, int xi){
 	this.coeff[xi] = coeff;
 	rebalance();
@@ -120,10 +127,6 @@ public class Polynomial{
 	return new Polynomial(result);
     }
     
-    public boolean isIrreducible(){
-	throw new UnsupportedOperationException();
-    }
-
     @Override
     public String toString(){
 
