@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="practica3" default="practica3.jar" basedir="." >
+
+  <property name="build.dir" value="build" />
+  <property name="src.dir"   value="src" />
+  <property name="doc.dir"   value="doc" />
+  <property name="lib.dir"   value="lib" />
+
+  <target name="practica3.jar" depends="compile.practica3">
+    <jar jarfile="practica3.jar">
+      <zipfileset dir="${build.dir}" prefix="" />
+      <manifest>
+        <attribute name="Main-Class" value="MainQRC"/>
+      </manifest>
+    </jar>
+  </target>
+
+  <target name="compile.practica3">
+    <mkdir dir="${build.dir}"/>
+    <javac srcdir="${src.dir}"
+           destdir="${build.dir}"
+	   classpath="${lib.dir}/practica1.jar"
+           debug="true"
+           debuglevel="lines,vars,source"
+           includeantruntime="false"
+           deprecation="true"
+           nowarn="off">
+      <compilerarg value="-Xlint:unchecked"/>
+    </javac>
+  </target>
+
+  <target name="doc" depends="practica3.jar">
+    <mkdir dir="${doc.dir}"/>
+    <javadoc defaultexcludes="yes"
+             destdir="${doc.dir}"
+             charset="UTF-8"
+             author="false"
+             version="false"
+             use="true"
+             windowtitle="Códigos de Residuo Cuadrático">
+      <fileset dir="${src.dir}"/>
+      <doctitle><![CDATA[<h1>Quadratic Residue Codes</h1>]]></doctitle>
+      <link href="http://docs.oracle.com/javase/8/docs/api/" />
+    </javadoc>
+  </target>
+
+  <target name="clean">
+    <delete file="practica3.jar"/>
+    <delete dir="${build.dir}"/>
+    <delete dir="${doc.dir}"/>
+    <delete file="build.xml~"/>
+  </target>
+
+</project>
