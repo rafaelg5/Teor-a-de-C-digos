@@ -31,8 +31,8 @@ public class MainQRC{
 	    cont = false;
 	    System.out.print("\nIntroducir p: ");
 	    p = scanner.nextInt();
-	    if(!isPrime(p)){
-		System.out.println("\nEl número \"p\" no es primo. "
+	    if(!isPrime(p) || p < 2){
+		System.out.println("\nEl número \"p\" no es primo mayor a 2. "
 				   + "Intente de nuevo.");
 		cont = true;
 		continue;
@@ -41,8 +41,8 @@ public class MainQRC{
 	    scanner.nextLine();
 	    System.out.print("\nIntroducir l: ");
 	    l = scanner.nextInt();
-	    if(!isPrime(l)){
-		System.out.println("\nEl número \"l\" no es primo. "
+	    if(!isPrime(l) || p < 2){
+		System.out.println("\nEl número \"p\" no es primo mayor a 2. "
 				   + "Intente de nuevo.");
 		cont = true;
 		continue;
@@ -51,17 +51,27 @@ public class MainQRC{
 	    scanner.nextLine();
 	    System.out.print("\nIntroducir m: ");
 	    m = scanner.nextInt();
-	    if(!isPrime(m)){
-		System.out.println("\nEl número \"m\" no es primo. "
+	    if(!isPrime(m) || p < 2){
+		System.out.println("\nEl número \"p\" no es primo mayor a 2. "
 				   + "Intente de nuevo.");
 		cont = true;
 		continue;
 	    }
 	    // Salto de línea
 	    scanner.nextLine();
+	    
+	}while(cont);
 
-	}while(cont);	
+	QRC qrc;
+
+	try{
+	    qrc = new QRC(file, p, l, m);
+	}catch(Exception e){
+	    e.printStackTrace();
+	}
     }
+
+    
 
     // Determina si un número es o no primo
     private static boolean isPrime(int p){

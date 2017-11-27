@@ -7,4 +7,4 @@ Doble clic en el archivo practica3.jar
 
 (Linux)
 En terminal, ejecutar el siguiente comando:
-java -jar practica1.jar
+java -jar practica3.jar
