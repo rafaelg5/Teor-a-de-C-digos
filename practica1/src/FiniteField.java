@@ -7,7 +7,7 @@ public class FiniteField implements Serializable{
     private int p;
     private int n;
     private Polynomial[] elements;
-    private Polynomial primitivePolynomial;
+    private Polynomial primitiveElement;
     private static final long serialVersionUID = 1L;
 
      /**
@@ -65,6 +65,14 @@ public class FiniteField implements Serializable{
 	return this.p;
     }
 
+    /**
+     * Obtiene el elemento primitivo del campo
+     * @return el elemento primitivo
+     */
+    public Polynomial getPrimitiveElement() {
+	return this.primitiveElement;
+    }
+    
     /**
      * Verifica si un polinomio es irreducible en un campo
      * @param polynomial el polinomio
@@ -184,7 +192,7 @@ public class FiniteField implements Serializable{
 	    }
 	
 	}
-	primitivePolynomial = polynomial;
+	primitiveElement = polynomial;
 	return auxElements;
     }
 
