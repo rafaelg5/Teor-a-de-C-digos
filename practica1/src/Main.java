@@ -264,7 +264,7 @@ public class Main{
     }
 
     // Determina si un número es o no primo
-    private static boolean isPrime(int p){
+    public static boolean isPrime(int p){
 
 	if(p == 1)
 	    return false;

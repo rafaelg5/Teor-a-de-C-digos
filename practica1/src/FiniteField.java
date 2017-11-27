@@ -10,6 +10,16 @@ public class FiniteField implements Serializable{
     private Polynomial primitivePolynomial;
     private static final long serialVersionUID = 1L;
 
+     /**
+     * Constructor para un campo finito sin el polinomio.
+     * @param p un número primo
+     * @throws Exception si el polinomio es constante o si no es irreducible
+     */
+    public FiniteField(int q) throws Exception{
+
+	this(q, new int[] {1,1});
+    }
+
     /**
      * Constructor para un campo finito. Tal que el número de elementos
      * del campo sea q = p^n y se toma como base un polinomio irreducible p(x) 
@@ -28,15 +38,10 @@ public class FiniteField implements Serializable{
 	    throw new PolynomialDegreeException("Polinomio inválido");
 	
 	q = (int)Math.pow(p, n);
-	this.p = p;	
+	this.p = p;
 	elements = new Polynomial[q];
 	elements = setElements();
-
-	/* si el polinomio es de grado 1, no tiene polinomio generador o
-	 * primitivo
-	 */
-	if(coeffs.length > 2)
-	    findPrimitivePolynomial();
+	findPrimitivePolynomial();
 
 	// Si no es irreducible el polinomio, lanzar excepción
 	if(!isIrreducible(polynomial)){
@@ -111,49 +116,73 @@ public class FiniteField implements Serializable{
 	    return null;
 
 	// polinomio a^k con k = n
-	int[] aux = new int[n];	
-	
+	int[] aux = new int[n];
+
+	/*
 	for(int i = 0; i < n; i++){
 	    int c = (-1 * polynomial.getCoefficient(i)) % p;
 	    c = c < 0 ? c + p : c;
 	    aux[i] = c;
 	}
 	
-	//Polynomial primitiveRoot = new Polynomial(aux);	
-	//auxElements[n] = new Polynomial(primitiveRoot.getCoefficients());
+	Polynomial primitiveRoot = new Polynomial(aux);	
+	auxElements[n] = new Polynomial(primitiveRoot.getCoefficients());
+	*/
 	auxElements[n] = new Polynomial(polynomial.getCoefficients());
-
-	// a^i = a * a^(i - 1)
-	for(int i = n + 1; i < q; i++){	    
-	    int[] alphaC = new int[n];
-	    Polynomial alpha = new Polynomial(alphaC);
-	    alpha.setCoefficient(1, 1);
-	    alpha.setDegree(1);
-	    // a * a^(i - 1)
-	    Polynomial newP = alpha.multiply(auxElements[i - 1]);
-	    moduloP(newP);
-
-	    // si el polinomio es de grado mayor a n, sustiuirlo correctamente
-	    if(newP.getCoefficients().length > n &&
-	       newP.getCoefficient(n) != 0){
-
-		Polynomial auxP =
-		    new Polynomial(auxElements[n].getCoefficients());
-		for(int j = 0; j < n; j++){
-		    int auxC = newP.getCoefficient(n) * auxP.getCoefficient(j);
-		    auxP.setCoefficient(auxC, j);
-		}
-		
-		newP = new Polynomial(Arrays.copyOfRange(newP.getCoefficients(),
-							 0, n));
-		newP = newP.add(auxP);	        
+	
+	if(n == 1) {
+	    // a^i = a * a^(i - 1)
+	    for(int i = n + 1; i < q; i++){
+	    
+		Polynomial alpha =
+		    new Polynomial(auxElements[1].getCoefficients());
+		// a * a^(i - 1)
+		Polynomial newP = alpha.multiply(auxElements[i - 1]);
+		moduloP(newP);
+	
+		if(contains(auxElements, newP))
+		    return null;
+		auxElements[i] =
+		    new Polynomial(newP.getCoefficients());
 	    }
+	} else {
+	    // a^i = a * a^(i - 1)
+	    for(int i = n + 1; i < q; i++){
+	    
+		int[] alphaC = new int[n];
+		Polynomial alpha = new Polynomial(alphaC);
+		alpha.setCoefficient(1, 1);
+		alpha.setDegree(1);
+		// a * a^(i - 1)
+		Polynomial newP = alpha.multiply(auxElements[i - 1]);
+		moduloP(newP);
 
-	    moduloP(newP);
-	    if(contains(auxElements, newP))
-		return null;
-	    auxElements[i] =
-		new Polynomial(Arrays.copyOfRange(newP.getCoefficients(),0, n));
+		/* si el polinomio es de grado mayor a n, sustiuirlo
+		 * correctamente
+		 */
+		if(newP.getCoefficients().length > n &&
+		   newP.getCoefficient(n) != 0){
+
+		    Polynomial auxP =
+			new Polynomial(auxElements[n].getCoefficients());
+		    for(int j = 0; j < n; j++){
+			int auxC = newP.getCoefficient(n)
+			    * auxP.getCoefficient(j);
+			auxP.setCoefficient(auxC, j);
+		    }
+		
+		    newP = new Polynomial(Arrays.copyOfRange(newP.getCoefficients(), 0, n));
+		    newP = newP.add(auxP);	        
+		}
+
+		moduloP(newP);
+		if(contains(auxElements, newP))
+		    return null;
+		auxElements[i] =
+		    new Polynomial(Arrays.copyOfRange(newP.getCoefficients(),
+						      0, n));
+	    }
+	
 	}
 	primitivePolynomial = polynomial;
 	return auxElements;
@@ -210,6 +239,7 @@ public class FiniteField implements Serializable{
     private void findPrimitivePolynomial(){
 
 	Polynomial[] aux = null;
+        
 	for(Polynomial p : elements){
 	    if(p.getCoefficient(0) == 0 && p.getDegree() == 0)
 		continue;
@@ -219,6 +249,7 @@ public class FiniteField implements Serializable{
 		break;
 	    }
 	}
+	
     }
 
     public Polynomial getElement(int e) throws NotElementOfFieldException{
@@ -403,10 +434,16 @@ public class FiniteField implements Serializable{
 	 */
 	
 	String field = "Campo F(" + q + "):\n";
+	field += "0\n";
 	int i = 0;
 	String alpha = "" + '\u03B1';
 
 	for(Polynomial pl : elements){
+
+	    if(i == 0){
+		i++;
+		continue;
+	    }
 	    
 	    field += alpha + "^" + i + " = " + elements[i] + "\n";
 	    i++;
